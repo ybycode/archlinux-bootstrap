@@ -1,0 +1,97 @@
+---
+- hosts: all
+  vars:
+    main_username: yann
+  tasks:
+    - name: Install base packages
+      pacman:
+        name: 'autoconf,automake,binutils,bison,docker,fakeroot,file,
+	  findutils,flex,gawk,gcc,gettext,grep,groff,gzip,jshon,
+	  libtool,m4,make,patch,pkg-config,sed,sudo,
+	  texinfo,unzip,util-linux,which'
+        state: present
+    - name: xorg and X11
+      pacman:
+        name: 'arandr, dmenu, gnome-keyring, gvfs-smb, 
+            i3-wm, i3lock, i3status,
+            lightdm,lightdm-gtk-greeter, libvdpau-va-gl,mesa-libgl,
+            thunar,thunar-volman,xclip,xf86-input-evdev,
+            xf86-input-synaptics,xf86-video-intel,xorg-server,
+            xorg-server-utils,xscreensaver,ttf-dejavu,ttf-inconsolata'
+    - name: Install of Alsa, Pulseaudio & co
+      pacman:
+        name: 'alsa-utils,pulseaudio,pulseaudio-alsa,pulseaudio-bluetooth'
+        state: present
+    - name: Install user apps
+      pacman:
+        name: 'feh,firefox,pavucontrol,network-manager-applet,
+          rxvt-unicode,smplayer,syncthing,unclutter'
+        state: present
+    #- name: Build AUR packages
+    #  shell: 'export PKGDEST=/var/cache/pacaur; su {{ main_username }} -c "pacaur -m --noedit --noconfirm
+    #    docker-git
+    #    i3-gaps-git"'
+    #- name: Installed AUR built packages
+    #  shell: 'pacman -U --noconfirm /var/cache/pacaur/*'
+    #  notify:
+    #    - manage docker service
+    - name: Install Docker
+      pacman:
+        name: docker
+        state: present
+    - name: Install openssh
+      pacman:
+        name: openssh
+        state: present
+    - name: Install networkmanager
+      pacman:
+        name: 'networkmanager,networkmanager-pptp,
+        networkmanager-openvpn'
+    - name: Set specific /etc files
+      synchronize:
+        mode: push
+        src: files/etc/
+        dest: /etc
+    #
+    # Services
+    #
+    - name: sshd daemon
+      service: name=sshd state=started enabled=yes
+    - name: Docker daemon
+      service: name=docker state=started enabled=yes
+    - name: Networkmanager daemon
+      service: name=NetworkManager state=started enabled=yes
+    #
+    # User stuff
+    #
+    - name: Create a normal user
+      user:
+        name: "{{ main_username }}" 
+        shell: /bin/zsh
+        groups: disk,lp,wheel,network,video,audio,optical,storage,scanner,power,docker
+    - name: Clone ybycode/dotfiles.git into /tmp
+      become: yes
+      become_user: "{{ main_username }}"
+      git:
+        repo: ssh://git@github.com/ybycode/dotfiles.git
+        dest: /tmp/{{main_username}}_dotfiles
+        key_file: /home/{{main_username}}/.ssh/id_rsa
+        accept_hostkey: yes
+    - name: Synchronize the cloned dotfiles in /tmp with $HOME
+      become: yes
+      become_user: "{{ main_username }}"
+      synchronize:
+        mode: push
+        src: /tmp/{{main_username}}_dotfiles/
+        dest: /home/{{main_username}}
+#
+#
+#
+  handlers:
+    - name: manage docker service
+      service: name=docker enabled=yes state=restarted
+    - name: manage sshd service
+      service: name=sshd enabled=yes state=restarted
+    - name: manage networkmanager service
+      service: name=networkmanager enabled=yes state=restarted
+...

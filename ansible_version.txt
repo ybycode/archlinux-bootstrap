@@ -1,0 +1,3 @@
+ansible 2.0.1.0
+  config file = /etc/ansible/ansible.cfg
+  configured module search path = Default w/o overrides
