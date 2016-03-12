@@ -24,17 +24,20 @@
         state: present
     - name: Install user apps
       pacman:
-        name: 'feh,firefox,pavucontrol,network-manager-applet,
+        name: 'feh,firefox,neovim,network-manager-applet,pavucontrol,
           rxvt-unicode,smplayer,syncthing,unclutter'
         state: present
-    #- name: Build AUR packages
-    #  shell: 'export PKGDEST=/var/cache/pacaur; su {{ main_username }} -c "pacaur -m --noedit --noconfirm
-    #    docker-git
-    #    i3-gaps-git"'
-    #- name: Installed AUR built packages
-    #  shell: 'pacman -U --noconfirm /var/cache/pacaur/*'
-    #  notify:
-    #    - manage docker service
+    - name: Install Arduino dependencies
+      pacman:
+        name: 'avrdude,jre8-openjdk,libftdi'
+    - name: Build Arduino from AUR 
+      shell: 'export PKGDEST=/var/cache/pacaur;
+             rm -Rf /var/cache/pacaur/*;
+             su {{ main_username }} -c "pacaur -m --noedit --noconfirm
+             arduino
+             "'
+    - name: Installed AUR built packages
+      shell: 'pacman -U --noconfirm /var/cache/pacaur/*'
     - name: Install Docker
       pacman:
         name: docker
