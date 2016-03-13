@@ -8,7 +8,7 @@
         name: 'autoconf,automake,binutils,bison,docker,fakeroot,file,
 	  findutils,flex,gawk,gcc,gettext,grep,groff,gzip,jshon,
 	  libtool,m4,make,patch,pkg-config,sed,sudo,
-	  texinfo,unzip,util-linux,which'
+	  texinfo,unzip,util-linux,wget,which'
         state: present
     - name: xorg and X11
       pacman:
@@ -24,7 +24,7 @@
         state: present
     - name: Install user apps
       pacman:
-        name: 'feh,firefox,neovim,network-manager-applet,pavucontrol,
+        name: 'evince,feh,firefox,neovim,network-manager-applet,pavucontrol,
           rxvt-unicode,smplayer,syncthing,unclutter'
         state: present
     - name: Install Arduino dependencies
@@ -66,12 +66,12 @@
       service: name=NetworkManager state=started enabled=yes
     #
     # User stuff
-    #
+    # Groups uucp and lock are for accessing arduino & co.
     - name: Create a normal user
       user:
         name: "{{ main_username }}" 
         shell: /bin/zsh
-        groups: disk,lp,wheel,network,video,audio,optical,storage,scanner,power,docker
+        groups: disk,lp,wheel,network,video,audio,optical,storage,scanner,power,docker,uucp,lock
     - name: Clone ybycode/dotfiles.git into /tmp
       become: yes
       become_user: "{{ main_username }}"
