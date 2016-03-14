@@ -66,6 +66,8 @@
       service: name=sshd state=started enabled=yes
     - name: Docker daemon
       service: name=docker state=started enabled=yes
+    - name: Avahi daemon
+      service: name=avahi-daemon state=started enabled=yes
     - name: Networkmanager daemon
       service: name=NetworkManager state=started enabled=yes
     #
