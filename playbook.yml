@@ -18,6 +18,10 @@
             thunar,thunar-volman,xclip,xf86-input-evdev,
             xf86-input-synaptics,xf86-video-intel,xorg-server,
             xorg-server-utils,xscreensaver,ttf-dejavu,ttf-inconsolata'
+    - name: Install of Avahi and dependencies
+      pacman:
+        name: 'avahi,python2-dbus'
+        state: present
     - name: Install of Alsa, Pulseaudio & co
       pacman:
         name: 'alsa-utils,pulseaudio,pulseaudio-alsa,pulseaudio-bluetooth'
