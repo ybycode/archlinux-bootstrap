@@ -28,8 +28,8 @@
         state: present
     - name: Install user apps
       pacman:
-        name: 'evince,feh,firefox,neovim,network-manager-applet,pavucontrol,
-          rxvt-unicode,smplayer,syncthing,unclutter'
+        name: 'darktable,evince,feh,firefox,gedit,neovim,network-manager-applet,
+              pavucontrol,rxvt-unicode,smplayer,syncthing,unclutter'
         state: present
     - name: Install Arduino dependencies
       pacman:
