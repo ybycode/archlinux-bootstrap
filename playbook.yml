@@ -7,7 +7,7 @@
       pacman:
         name: 'autoconf,automake,binutils,bison,docker,fakeroot,file,
 	  findutils,flex,gawk,gcc,gettext,grep,groff,gzip,jshon,
-	  libtool,m4,make,patch,pkg-config,sed,sudo,
+	  keychain,libtool,m4,make,patch,pkg-config,sed,sudo,
 	  texinfo,unzip,util-linux,wget,which'
         state: present
     - name: xorg and X11
