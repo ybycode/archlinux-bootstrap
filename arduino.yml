@@ -1,0 +1,17 @@
+- name: Test if arduino is already installed
+  shell: command -v arduino
+  register: result
+  changed_when: False
+- block:
+    - name: Install Arduino dependencies
+      pacman:
+        name: 'avrdude,jre8-openjdk,libftdi'
+    - name: Build Arduino from AUR 
+      shell: 'export PKGDEST=/var/cache/pacaur;
+             rm -Rf /var/cache/pacaur/*;
+             su {{ main_username }} -c "pacaur -m --noedit --noconfirm
+             arduino
+             "'
+    - name: Installed AUR built packages
+      command: 'pacman -U --noconfirm /var/cache/pacaur/*'
+  when: result.stdout == ""

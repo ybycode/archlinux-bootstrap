@@ -6,18 +6,18 @@
     - name: Install base packages
       pacman:
         name: 'autoconf,automake,binutils,bison,docker,fakeroot,file,
-	  findutils,flex,gawk,gcc,gettext,grep,groff,gzip,jshon,
-	  keychain,libtool,m4,make,patch,pkg-config,sed,sudo,
-	  texinfo,unzip,util-linux,wget,which'
+	      findutils,flex,gawk,gcc,gettext,grep,groff,gzip,jshon,
+	      keychain,libtool,m4,make,openssh,patch,pkg-config,sed,sudo,
+	      texinfo,unzip,util-linux,wget,which'
         state: present
     - name: xorg and X11
       pacman:
-        name: 'arandr, dmenu, gnome-keyring, gvfs-smb, 
-            i3-wm, i3lock, i3status,
-            lightdm,lightdm-gtk-greeter, libvdpau-va-gl,mesa-libgl,
-            thunar,thunar-volman,xclip,xf86-input-evdev,
-            xf86-input-synaptics,xf86-video-intel,xorg-server,
-            xorg-server-utils,xscreensaver,ttf-dejavu,ttf-inconsolata'
+        name: 'arandr,dmenu,eog,gnome-keyring,gvfs-smb,
+              i3-wm,i3lock,i3status,
+              lightdm,lightdm-gtk-greeter,libvdpau-va-gl,mesa-libgl,
+              thunar,thunar-volman,xclip,xf86-input-evdev,
+              xf86-input-synaptics,xf86-video-intel,xorg-server,
+              xorg-server-utils,xscreensaver,ttf-dejavu,ttf-inconsolata'
     - name: Install of Avahi and dependencies
       pacman:
         name: 'avahi,python2-dbus'
@@ -26,34 +26,20 @@
       pacman:
         name: 'alsa-utils,pulseaudio,pulseaudio-alsa,pulseaudio-bluetooth'
         state: present
+    - name: Install networkmanager
+      pacman:
+        name: 'networkmanager,networkmanager-pptp,networkmanager-openvpn'
+        state: present
     - name: Install user apps
       pacman:
         name: 'darktable,evince,feh,firefox,gedit,neovim,network-manager-applet,
               pavucontrol,rxvt-unicode,smplayer,syncthing,unclutter'
         state: present
-    - name: Install Arduino dependencies
-      pacman:
-        name: 'avrdude,jre8-openjdk,libftdi'
-    - name: Build Arduino from AUR 
-      shell: 'export PKGDEST=/var/cache/pacaur;
-             rm -Rf /var/cache/pacaur/*;
-             su {{ main_username }} -c "pacaur -m --noedit --noconfirm
-             arduino
-             "'
-    - name: Installed AUR built packages
-      shell: 'pacman -U --noconfirm /var/cache/pacaur/*'
     - name: Install Docker
       pacman:
         name: docker
         state: present
-    - name: Install openssh
-      pacman:
-        name: openssh
-        state: present
-    - name: Install networkmanager
-      pacman:
-        name: 'networkmanager,networkmanager-pptp,
-        networkmanager-openvpn'
+    - include: arduino.yml
     - name: Set specific /etc files
       synchronize:
         mode: push
@@ -78,21 +64,7 @@
         name: "{{ main_username }}" 
         shell: /bin/zsh
         groups: disk,lp,wheel,network,video,audio,optical,storage,scanner,power,docker,uucp,lock
-    - name: Clone ybycode/dotfiles.git into /tmp
-      become: yes
-      become_user: "{{ main_username }}"
-      git:
-        repo: ssh://git@github.com/ybycode/dotfiles.git
-        dest: /tmp/{{main_username}}_dotfiles
-        key_file: /home/{{main_username}}/.ssh/id_rsa
-        accept_hostkey: yes
-    - name: Synchronize the cloned dotfiles in /tmp with $HOME
-      become: yes
-      become_user: "{{ main_username }}"
-      synchronize:
-        mode: push
-        src: /tmp/{{ main_username }}_dotfiles/
-        dest: "/home/{{ main_username }}"
+    - include: dotfiles.yml
     - include: rust.yml
     - name: install python for neovim
       pip:

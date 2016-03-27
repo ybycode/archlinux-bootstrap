@@ -1,0 +1,24 @@
+- name: Is the dotfiles repository already cloned ?
+  become: yes
+  become_user: "{{ main_username }}"
+  shell: ls ~/.git 
+  ignore_errors: yes
+  register: result
+  changed_when: False
+- block:
+    - name: Clone ybycode/dotfiles.git into /tmp
+      become: yes
+      become_user: "{{ main_username }}"
+      git:
+        repo: ssh://git@github.com/ybycode/dotfiles.git
+        dest: /tmp/{{main_username}}_dotfiles
+        key_file: /home/{{main_username}}/.ssh/id_rsa
+        accept_hostkey: yes
+    - name: Synchronize the cloned dotfiles in /tmp with $HOME
+      become: yes
+      become_user: "{{ main_username }}"
+      synchronize:
+        mode: push
+        src: /tmp/{{ main_username }}_dotfiles/
+        dest: "/home/{{ main_username }}"
+  when: result.rc != 0

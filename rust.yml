@@ -2,7 +2,17 @@
   pacman:
     name: cargo
     state: present
+- name: Check if racer is installed already
+  become: yes
+  become_user: "{{ main_username }}"
+  shell: command -v racer
+  register: return
+  changed_when: False
 - name: Install racer
   become: yes
   become_user: "{{ main_username }}"
   command: cargo install racer
+  when: return.stdout == ""
+  #args:
+  #creates: ~/.cargo/bin/racer
+
