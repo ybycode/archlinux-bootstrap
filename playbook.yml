@@ -93,6 +93,7 @@
         mode: push
         src: /tmp/{{ main_username }}_dotfiles/
         dest: "/home/{{ main_username }}"
+    - include: rust.yml
     - name: install python for neovim
       pip:
         name: neovim

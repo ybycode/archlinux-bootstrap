@@ -1,0 +1,8 @@
+- name: Install cargo
+  pacman:
+    name: cargo
+    state: present
+- name: Install racer
+  become: yes
+  become_user: "{{ main_username }}"
+  command: cargo install racer
