@@ -91,8 +91,12 @@
       become_user: "{{ main_username }}"
       synchronize:
         mode: push
-        src: /tmp/{{main_username}}_dotfiles/
-        dest: /home/{{main_username}}
+        src: /tmp/{{ main_username }}_dotfiles/
+        dest: "/home/{{ main_username }}"
+    - name: install python for neovim
+      pip:
+        name: neovim
+        executable: /usr/bin/pip3
 #
 #
 #
