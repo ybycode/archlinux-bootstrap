@@ -5,67 +5,40 @@
   tasks:
     - name: Install base packages
       pacman:
-        name: 'autoconf,automake,binutils,bison,docker,fakeroot,file,
+        name: 'autoconf,automake,binutils,bison,fakeroot,file,
 	      findutils,flex,gawk,gcc,gettext,grep,groff,gzip,jshon,
-	      keychain,libtool,m4,make,openssh,patch,pkg-config,sed,sudo,
-	      texinfo,unzip,util-linux,wget,which'
-        state: present
-    - name: xorg and X11
-      pacman:
-        name: 'arandr,dmenu,eog,gnome-keyring,gvfs-smb,
-              i3-wm,i3lock,i3status,
-              lightdm,lightdm-gtk-greeter,libvdpau-va-gl,mesa-libgl,
-              thunar,thunar-volman,xclip,xf86-input-evdev,
-              xf86-input-synaptics,xf86-video-intel,xorg-server,
-              xorg-server-utils,xscreensaver,ttf-dejavu,ttf-inconsolata'
-    - name: Install of Avahi and dependencies
-      pacman:
-        name: 'avahi,python2-dbus'
-        state: present
-    - name: Install of Alsa, Pulseaudio & co
-      pacman:
-        name: 'alsa-utils,pulseaudio,pulseaudio-alsa,pulseaudio-bluetooth'
-        state: present
-    - name: Install networkmanager
-      pacman:
-        name: 'networkmanager,networkmanager-pptp,networkmanager-openvpn'
+	      keychain,libtool,m4,make,openssh,patch,pkg-config,
+              sed,sudo,texinfo,unzip,util-linux,wget,which'
         state: present
     - name: Install user apps
       pacman:
-        name: 'darktable,evince,feh,firefox,gedit,neovim,network-manager-applet,
-              pavucontrol,rxvt-unicode,smplayer,syncthing,unclutter'
+        name: 'elixir,fail2ban,neovim,rsync,python-pip,zsh'
         state: present
-    - name: Install Docker
-      pacman:
-        name: docker
-        state: present
-    - include: arduino.yml
     - name: Set specific /etc files
       synchronize:
         mode: push
         src: files/etc/
         dest: /etc
-    #
+    - name: Generate locales
+      shell: locale-gen
+    
     # Services
-    #
+    
     - name: sshd daemon
       service: name=sshd state=started enabled=yes
-    - name: Docker daemon
-      service: name=docker state=started enabled=yes
-    - name: Avahi daemon
-      service: name=avahi-daemon state=started enabled=yes
-    - name: Networkmanager daemon
-      service: name=NetworkManager state=started enabled=yes
-    #
+    
     # User stuff
     # Groups uucp and lock are for accessing arduino & co.
     - name: Create a normal user
       user:
         name: "{{ main_username }}" 
         shell: /bin/zsh
-        groups: disk,lp,wheel,network,video,audio,optical,storage,scanner,power,docker,uucp,lock
+        groups: wheel
+    - name: Create a nologin user
+      user:
+        name: www
+        shell: /sbin/nologin
     - include: dotfiles.yml
-    - include: rust.yml
     - name: install python for neovim
       pip:
         name: neovim
@@ -74,10 +47,6 @@
 #
 #
   handlers:
-    - name: manage docker service
-      service: name=docker enabled=yes state=restarted
     - name: manage sshd service
       service: name=sshd enabled=yes state=restarted
-    - name: manage networkmanager service
-      service: name=networkmanager enabled=yes state=restarted
 ...

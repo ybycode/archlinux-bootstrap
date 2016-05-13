@@ -10,9 +10,8 @@
       become: yes
       become_user: "{{ main_username }}"
       git:
-        repo: ssh://git@github.com/ybycode/dotfiles.git
+        repo: https://github.com/ybycode/dotfiles.git
         dest: /tmp/{{main_username}}_dotfiles
-        key_file: /home/{{main_username}}/.ssh/id_rsa
         accept_hostkey: yes
     - name: Synchronize the cloned dotfiles in /tmp with $HOME
       become: yes
@@ -21,4 +20,4 @@
         mode: push
         src: /tmp/{{ main_username }}_dotfiles/
         dest: "/home/{{ main_username }}"
-  when: result.rc != 0
+  #when: result.rc != 0
