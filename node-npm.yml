@@ -1,0 +1,12 @@
+- name: Install node and npm
+  pacman:
+    name: 'nodejs,npm'
+    state: present
+- name: create a directory for npm packages
+  become: yes
+  become_user: "{{ main_username }}"
+  file:
+    path: "/home/{{ main_username }}/.npm-packages"
+    state: directory
+    mode: 0755
+

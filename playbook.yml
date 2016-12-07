@@ -5,7 +5,7 @@
   tasks:
     - name: Install base packages
       pacman:
-        name: 'autoconf,automake,binutils,bison,docker,fakeroot,file,
+        name: 'autoconf,automake,binutils,bison,cups,docker,fakeroot,file,
 	      findutils,flex,gawk,gcc,gettext,grep,groff,gzip,jshon,
 	      keychain,libtool,m4,make,openssh,patch,pkg-config,sed,sudo,
 	      texinfo,unzip,util-linux,wget,which'
@@ -17,10 +17,17 @@
               lightdm,lightdm-gtk-greeter,libvdpau-va-gl,mesa-libgl,
               thunar,thunar-volman,xclip,xf86-input-evdev,
               xf86-input-synaptics,xf86-video-intel,xorg-server,
-              xorg-server-utils,xscreensaver,ttf-dejavu,ttf-inconsolata'
+              xorg-server-utils,xscreensaver'
+    - name: fonts
+      pacman:
+        name: 'ttf-dejavu,ttf-inconsolata,
+               ttf-tw,wqy-microhei,wqy-zenhei,ttf-arphic-ukai,ttf-arphic-uming,
+               opendesktop-fonts,wqy-bitmapfont,ttf-hannom,otf-ipafont,
+               ttf-vlgothic,ttf-mplus,ttf-monapo,ttf-sazanami,ttf-baekmuk,
+               ttf-unfonts-core,ttf-nanum,ttf-nanumgothic_coding'
     - name: Install of Avahi and dependencies
       pacman:
-        name: 'avahi,python2-dbus'
+        name: 'avahi,python2-dbus,nss-mdns'
         state: present
     - name: Install of Alsa, Pulseaudio & co
       pacman:
@@ -32,8 +39,9 @@
         state: present
     - name: Install user apps
       pacman:
-        name: 'darktable,evince,feh,firefox,gedit,neovim,network-manager-applet,
-              pavucontrol,rxvt-unicode,smplayer,syncthing,unclutter'
+        name: 'darktable,eslint,evince,feh,firefox,gedit,neovim,
+               network-manager-applet,pavucontrol,rxvt-unicode,smplayer,
+               syncthing,unclutter'
         state: present
     - name: Install Docker
       pacman:
@@ -61,11 +69,12 @@
     # Groups uucp and lock are for accessing arduino & co.
     - name: Create a normal user
       user:
-        name: "{{ main_username }}" 
+        name: "{{ main_username }}"
         shell: /bin/zsh
         groups: disk,lp,wheel,network,video,audio,optical,storage,scanner,power,docker,uucp,lock
     - include: dotfiles.yml
     - include: rust.yml
+    - include: node-npm.yml
     - name: install python for neovim
       pip:
         name: neovim
